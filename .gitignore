@@ -1,0 +1,3 @@
+# Ignore changes to config file so tokens 
+# are not pushed
+datacollection.service/config.yaml
