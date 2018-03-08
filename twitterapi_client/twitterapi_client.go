@@ -1,4 +1,4 @@
-package twitterapiclient
+package twitterapi_client
 
 import (
 	"github.com/dghubble/go-twitter/twitter"
@@ -26,7 +26,12 @@ func init() {
 // GetStream : returns new stream with the given params
 func GetStream(params *pb.Params) (*twitter.Stream, error) {
 
-	tp := &twitter.StreamFilterParams{}
+	// Convert request params to a twitter specific struct
+	tp := &twitter.StreamFilterParams{
+		Track:         params.Track,
+		Language:      params.Language,
+		StallWarnings: twitter.Bool(params.StallWarnings),
+	}
 
 	stream, err := client.Streams.Filter(tp)
 	if err != nil { // Handle errors reading the config file

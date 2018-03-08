@@ -12,7 +12,9 @@ service TwitterRoute {
 
 message Params {
     repeated string Track = 1;
-    bool StallWarnings = 2;
+    repeated string Language = 2;
+    bool StallWarnings = 3;
+    
 }
 
 message Tweet {
