@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+// Interface exported by the server.
+service TwitterRefined {
+    // Obtains the Features available within the given Rectangle.  Results are
+    // streamed rather than returned at once (e.g. in a response message with a
+    // repeated field), as the rectangle may cover a large area and contain a
+    // huge number of features.
+    rpc GetTweets(Params) returns (stream Tweet) {}
+}
+
+
+message Params {
+    []string Track = 1
+    bool StallWarnings = 2
+}
+
+message Tweet {
+    string CreatedAt = 1
+    int64  RetweetCount = 2
+    string Text = 3
+}
+
