@@ -20,20 +20,26 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 		return err
 	}
 
+	// Receives messages and type switches them to
+	// call functions with typed messages. As we are
+	// only interested in the tweets we only add the
+	// 'Tweet' handler
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
+		// Extract the desired data
 		r := &pb.Tweet{
 			CreatedAt:    tweet.CreatedAt,
 			RetweetCount: int64(tweet.RetweetCount),
 			Text:         tweet.Text,
 		}
+		// Send the data back on the stream
 		if err = stream.Send(r); err != nil {
-
 			ts.Stop()
 			panic(fmt.Errorf("fatal error config file: %s", err))
 		}
 	}
 
+	// Add the stream to the demux handler
 	demux.HandleChan(ts.Messages)
 
 	return nil
