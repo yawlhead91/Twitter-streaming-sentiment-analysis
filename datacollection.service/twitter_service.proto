@@ -11,13 +11,13 @@ service TwitterRefined {
 
 
 message Params {
-    []string Track = 1
-    bool StallWarnings = 2
+    repeated string Track = 1;
+    bool StallWarnings = 2;
 }
 
 message Tweet {
-    string CreatedAt = 1
-    int64  RetweetCount = 2
-    string Text = 3
+    string CreatedAt = 1;
+    int64  RetweetCount = 2;
+    string Text = 3;
 }
 
