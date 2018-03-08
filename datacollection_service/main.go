@@ -1,14 +1,20 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
+	"net"
 
-	"github.com/dghubble/go-twitter/twitter"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+
+	s "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/server"
+	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
+)
+
+const (
+	port = 5253
 )
 
 func main() {
@@ -21,24 +27,17 @@ func main() {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
 
-	params := &twitter.StreamFilterParams{
-		Track:         []string{"bitcoin"},
-		StallWarnings: twitter.Bool(true),
+	flag.Parse()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
-	stream, err := client.Streams.Filter(params)
-
-	demux := twitter.NewSwitchDemux()
-	demux.Tweet = func(tweet *twitter.Tweet) {
-		fmt.Println(tweet.Text)
+	grpcServer := grpc.NewServer()
+	pb.RegisterTwitterRouteServer(grpcServer, &s.TwitterRouteServer{})
+	// determine whether to use TLS
+	log.Printf("Serving twitter route server on : %d", port)
+	err = grpcServer.Serve(lis)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
-
-	go demux.HandleChan(stream.Messages)
-
-	// Wait for SIGINT and SIGTERM (HIT CTRL-C)
-	ch := make(chan os.Signal)
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	log.Println(<-ch)
-
-	stream.Stop()
-
 }
