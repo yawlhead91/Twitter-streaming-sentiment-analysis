@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	dc "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/datacollection_client"
+	dc "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/datacollectionclient"
 	_ "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/sentiment"
 )
 
