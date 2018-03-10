@@ -1,7 +1,7 @@
 package server
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/dghubble/go-twitter/twitter"
 	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
@@ -22,6 +22,9 @@ type TwitterRouteServer struct{}
 // GetTweets creates a stream of tweets for the given params
 // to be searched for from the twitter api
 func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute_GetTweetsServer) error {
+
+	errors := make(chan error)
+
 	var streamcount int32
 	// Here add or own feature to mutate
 	// the stream from the twitter client
@@ -36,7 +39,12 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 	if err != nil {
 		return err
 	}
-	defer ts.Stop()
+
+	go func() {
+		<-errors
+		log.Print("Closing twitter stream")
+		ts.Stop()
+	}()
 
 	// Receives messages and type switches them to
 	// call functions with typed messages. As we are
@@ -54,8 +62,7 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 
 		// Send the data back on the stream
 		if err = stream.Send(r); err != nil {
-			ts.Stop()
-			panic(fmt.Errorf("fatal error config file: %s", err))
+			errors <- err
 		}
 	}
 
@@ -63,6 +70,7 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 	// stream does not exceed stream allowance
 	for message := range ts.Messages {
 		if streamcount >= limit {
+			errors <- nil
 			return nil
 		}
 		demux.Handle(message)

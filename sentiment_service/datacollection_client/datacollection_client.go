@@ -7,6 +7,7 @@ import (
 	"log"
 
 	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
+	sentiment "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/sentiment"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -50,6 +51,7 @@ func StreamTweets() error {
 		Track:         []string{"Bitcoin"},
 		Language:      []string{"en"},
 		StallWarnings: false,
+		Maxcount:      100,
 	}
 
 	stream, err := client.GetTweets(context.Background(), params)
@@ -65,7 +67,11 @@ func StreamTweets() error {
 		if err != nil {
 			return err
 		}
-		log.Println(tweet)
+
+		err = sentiment.Run(tweet)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
