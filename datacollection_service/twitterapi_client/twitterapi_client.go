@@ -9,7 +9,7 @@ import (
 
 var client *twitter.Client
 
-func init() {
+func Auth() {
 	// The twitter package provides a Client for accessing the Twitter API.
 	// Here we create a new twitter client using the credentials in the config file
 	config := oauth1.NewConfig(viper.GetString("credentials.consumerKey"),
@@ -21,6 +21,7 @@ func init() {
 	// passed to twitter NewClient as Oauth1
 	httpClient := config.Client(oauth1.NoContext, token)
 	client = twitter.NewClient(httpClient)
+
 }
 
 // GetStream : returns new stream with the given params
@@ -29,7 +30,6 @@ func GetStream(params *pb.Params) (*twitter.Stream, error) {
 	// Convert request params to a twitter specific struct
 	tp := &twitter.StreamFilterParams{
 		Track:         params.Track,
-		Language:      params.Language,
 		StallWarnings: twitter.Bool(params.StallWarnings),
 	}
 

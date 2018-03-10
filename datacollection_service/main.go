@@ -11,6 +11,7 @@ import (
 
 	s "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/server"
 	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
+	t "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitterapi_client"
 )
 
 const (
@@ -26,6 +27,8 @@ func main() {
 	if err != nil {             // Handle errors reading the config file
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
+
+	t.Auth()
 
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))

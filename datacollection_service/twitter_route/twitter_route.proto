@@ -14,7 +14,7 @@ message Params {
     repeated string Track = 1;
     repeated string Language = 2;
     bool StallWarnings = 3;
-    
+    int32 Maxcount = 4;
 }
 
 message Tweet {
