@@ -1,22 +1,27 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	dc "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/datacollectionclient"
 	r "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/repository"
 	_ "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/sentiment"
 )
 
-var datastoreAddr = flag.String("datastore_addr", "127.0.0.1:27017", "The datastore address in the format of host:port")
+var datastoreAddr = "127.0.0.1:27017"
 
 func main() {
 
-	host := (*datastoreAddr)
+	host := os.Getenv("datastoreAddr")
+	if host != "" {
+		datastoreAddr = host
+	}
 
-	session, err := r.CreateSession(host)
+	log.Print("Host:", host)
+
+	session, err := r.CreateSession(datastoreAddr)
 	if err != nil {
 
 		// We're wrapping the error returned from our CreateSession
