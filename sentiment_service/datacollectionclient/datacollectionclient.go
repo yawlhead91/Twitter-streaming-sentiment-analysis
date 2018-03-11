@@ -35,6 +35,8 @@ func StreamTweets(session *mgo.Session) error {
 		serverAddr = host
 	}
 
+	log.Print("Host: ", host)
+
 	repo := &r.TweetRepository{session}
 	defer repo.Close()
 
