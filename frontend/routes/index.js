@@ -8,7 +8,9 @@ router.get('/', function (req, res, next) {
   collection.find({}, {}, function (e, docs) {
     if(e){
       console.log(e)
+      return e
     }
+
     res.render('index', {
       title: 'Tweet Sentiment',
       tweets: docs
