@@ -78,7 +78,8 @@ clean:
 build: clean
 	go get -d -v ./...
 	go install
-	go build -o main .
+	protoc -I ./twitter_route twitter_route.proto--go_out=plugins=grpc:twitter_route
+	go run main.go
 
 
 .PHONY: link linux darwin windows test vet fmt clean

@@ -9,6 +9,7 @@ services:
       - datacollection_service
     environment:
       serverAddr: datacollection_service:5253
+      datastoreAddr: datastore:27017
   datastore:
     image: mongo
     ports:

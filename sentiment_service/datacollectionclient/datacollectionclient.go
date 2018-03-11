@@ -6,10 +6,13 @@ import (
 	"io"
 	"log"
 
-	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
-	sentiment "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/sentiment"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
+	r "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/repository"
+	sentiment "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/sentiment"
+	mgo "gopkg.in/mgo.v2"
 )
 
 var (
@@ -23,7 +26,11 @@ var client pb.TwitterRouteClient
 
 // StreamTweets : returns a stream of tweets from
 // the data collection service
-func StreamTweets() error {
+func StreamTweets(session *mgo.Session) error {
+
+	repo := &r.TweetRepository{session}
+	defer repo.Close()
+
 	var opts []grpc.DialOption
 	if *tls {
 		if *caFile == "" {
@@ -68,7 +75,14 @@ func StreamTweets() error {
 			return err
 		}
 
-		err = sentiment.Run(tweet)
+		score, err := sentiment.Run(tweet.Text)
+		if err != nil {
+			return err
+		}
+
+		tweet.Score = int32(score)
+
+		err = repo.Create(tweet)
 		if err != nil {
 			return err
 		}
