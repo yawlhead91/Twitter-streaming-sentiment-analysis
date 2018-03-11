@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	collection = "news_raw"
+	collection = "tweet_sentiment"
 )
 
 type Repository interface {
