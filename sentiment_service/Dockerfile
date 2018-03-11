@@ -1,9 +1,9 @@
-FROM golang:latest
-RUN mkdir ./app
-COPY  . /go/src/github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service
-WORKDIR /go/src/github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service
+FROM golang:1.8
 
-RUN go get -d -v ./...
-RUN go build
+WORKDIR /go/src/app
+COPY . .
 
-CMD app;
+RUN go get -d ./...
+RUN go install ./...
+
+CMD ["app"]

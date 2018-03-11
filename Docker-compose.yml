@@ -1,0 +1,14 @@
+version: '3'
+services:
+  datacollection_service:
+    build: ./datacollection_service
+  sentiment_service:
+    build: ./sentiment_service
+    depends_on:
+      - datastore
+      - datacollection_service
+  datastore:
+    image: mongo
+    ports:
+      - 27017:27017
+
