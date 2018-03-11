@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"log"
+
 	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
 	mgo "gopkg.in/mgo.v2"
 )
@@ -21,6 +23,8 @@ type TweetRepository struct {
 
 // Create a new thing
 func (repo *TweetRepository) Create(tweet *pb.Tweet) error {
+
+	log.Print("Collection: ", collection)
 	_, e := repo.collection().Upsert(tweet, tweet)
 	return e
 }
@@ -50,5 +54,6 @@ func (repo *TweetRepository) Close() {
 }
 
 func (repo *TweetRepository) collection() *mgo.Collection {
+
 	return repo.Session.DB(dbName).C(collection)
 }
