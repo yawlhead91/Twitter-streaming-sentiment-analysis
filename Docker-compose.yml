@@ -7,6 +7,8 @@ services:
     depends_on:
       - datastore
       - datacollection_service
+    environment:
+      serverAddr: datacollection_service:5253
   datastore:
     image: mongo
     ports:
