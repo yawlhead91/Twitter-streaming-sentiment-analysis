@@ -1,10 +1,9 @@
-FROM golang:latest
+FROM golang:1.8
+
+WORKDIR /go/src/app
 COPY . .
 
-RUN go get -d -v ./...
-RUN go install -v ./...
+RUN go get -d ./...
+RUN go install ./...
 
-WORKDIR /go/src/datacollection
-
-
-CMD ["datacollection"]
+CMD ["app"]
