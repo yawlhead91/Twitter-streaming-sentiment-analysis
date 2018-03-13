@@ -7,13 +7,19 @@ router.get('/', function (req, res, next) {
   var collection = db.get('tweet_sentiment');
   collection.find({}, {}, function (e, docs) {
     if(e){
-      console.log(e)
-      return e
+      console.log(e);
+      return e;
     }
+
+    translated = docs.map(obj => {
+      var sentiment = (obj['score'] == 1) ? 'Positive' : 'Negative';
+      obj['score'] = sentiment
+      return obj
+    });
 
     res.render('index', {
       title: 'Tweet Sentiment',
-      tweets: docs
+      tweets: translated
     });
   });
 });

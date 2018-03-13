@@ -5,6 +5,16 @@ block content
   p Welcome to #{title} for Bitcoin
 
   h2 Tweets
-  ul
-    each tweet, i in tweets
-      li= tweet
+  table
+    thead
+      tr 
+        th CreatedAt
+        th Text
+        th Sentiment
+    tbody
+      each tweet, i in tweets
+        tr
+          th= tweet.createdat
+          th= tweet.text
+          th= tweet.score
+
