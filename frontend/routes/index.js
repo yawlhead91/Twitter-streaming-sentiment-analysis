@@ -6,10 +6,7 @@ router.get('/', function (req, res, next) {
   var db = req.db;
   var collection = db.get('tweet_sentiment');
   collection.find({}, {}, function (e, docs) {
-    if(e){
-      console.log(e);
-      return e;
-    }
+    if(e) return e;
 
     translated = docs.map(obj => {
       var sentiment = (obj['score'] == 1) ? 'Positive' : 'Negative';
