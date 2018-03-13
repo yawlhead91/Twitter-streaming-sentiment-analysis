@@ -5,20 +5,40 @@ var router = express.Router();
 router.get('/', function (req, res, next) {
   var db = req.db;
   var collection = db.get('tweet_sentiment');
-  collection.find({}, {}, function (e, docs) {
-    if(e) return e;
+  var translated, average;
 
-    translated = docs.map(obj => {
-      var sentiment = (obj['score'] == 1) ? 'Positive' : 'Negative';
-      obj['score'] = sentiment
-      return obj
+  // Preform aggregate function to get average
+  // sentiment score and total number of tweets
+  collection.aggregate([{
+    $group: {
+      _id: null,
+      avgscore: {
+        $avg: "$score"
+      }
+    }
+
+  }], (e, docs) => {
+    if (e) next(e);
+    average = docs.pop()['avgscore'];
+
+    collection.find({}, {}, (e, docs) => {
+      if (e) next(e);
+
+      translated = docs.map(obj => {
+        var sentiment = (obj['score'] > 0.5) ? 'Positive' : 'Negative';
+        obj['score'] = sentiment
+        return obj
+      });
+
+      res.render('index', {
+        title: 'Tweet Sentiment',
+        tweets: translated,
+        avgscore: average
+      });
     });
 
-    res.render('index', {
-      title: 'Tweet Sentiment',
-      tweets: translated
-    });
   });
+
 });
 
 module.exports = router;
