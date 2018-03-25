@@ -10,6 +10,15 @@ services:
     environment:
       serverAddr: datacollection_service:5253
       datastoreAddr: datastore:27017
+  frontend:
+    build: ./frontend
+    depends_on:
+      - sentiment_service
+    ports:
+      - 3000:3000
+    environment:
+      DATASTORE_ADDR: datastore:27017
+    
   datastore:
     image: mongo
     ports:

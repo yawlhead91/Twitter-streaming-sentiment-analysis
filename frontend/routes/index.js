@@ -3,6 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
+
   var db = req.db;
   var collection = db.get('tweet_sentiment');
   var translated, average;
@@ -16,8 +17,8 @@ router.get('/', function (req, res, next) {
         $avg: "$score"
       }
     }
-
   }], (e, docs) => {
+
     if (e) next(e);
     average = docs.pop()['avgscore'];
 
@@ -35,9 +36,11 @@ router.get('/', function (req, res, next) {
         tweets: translated,
         avgscore: average
       });
+      
     });
-
   });
+
+ 
 
 });
 

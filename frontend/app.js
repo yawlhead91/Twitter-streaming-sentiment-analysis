@@ -8,9 +8,13 @@ var bodyParser = require('body-parser');
 var mongo = require('mongodb');
 var monk = require('monk');
 
-datastore = process.env.DATASTORE_ADDR ? process.env.DATASTORE_ADDR : 'localhost:27017/'
-url = datastore+"tweets"
+var datastore = process.env.DATASTORE_ADDR ? process.env.DATASTORE_ADDR : 'localhost:27017'
+
+var url = datastore+"/tweets"
 var db = monk(url);
+db.catch(function(err) {
+  console.log(err)
+});
 
 var index = require('./routes/index');
 
