@@ -1,4 +1,4 @@
 # Ignore changes to config file so tokens 
 # are not pushed
-datacollection.service/config.yaml
+datacollection_service/config.yaml
 frontend/node_modules/
