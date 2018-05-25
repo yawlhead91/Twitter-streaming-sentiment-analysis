@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+// Interface exported by the server.
+service RssRoute {
+    // Obtains the Features available within the given Rectangle.  Results are
+    // streamed rather than returned at once (e.g. in a response message with a
+    // repeated field), as the rectangle may cover a large area and contain a
+    // huge number of features.
+    rpc GetRss(ParamsRss) returns (stream FeedItem) {}
+}
+
+message ParamsRss {
+    int32 Maxcount = 1;
+}
+
+message FeedItem {
+    string CreatedAt = 1;
+    string  Title = 2;
+    string Text = 3;
+    int32  Score = 4;
+}
+

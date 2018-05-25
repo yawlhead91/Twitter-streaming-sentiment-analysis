@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/dghubble/go-twitter/twitter"
+	rss "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/rss_client"
+	rs "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/rss_route"
 	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
 	t "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitterapi_client"
 )
@@ -18,6 +20,10 @@ var limit int32
 // TwitterRouteServer Implements the generated
 // TwitterRouteServer interface made in the proto file
 type TwitterRouteServer struct{}
+
+// RssRouteServer Implements the generated
+// RssRouteServer interface made in the proto file
+type RssRouteServer struct{}
 
 // GetTweets creates a stream of tweets for the given params
 // to be searched for from the twitter api
@@ -79,5 +85,24 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 		streamcount++
 	}
 
+	return nil
+}
+
+func (s *RssRouteServer) GetRss(params *rs.ParamsRss, stream rs.RssRoute_GetRssServer) error {
+	feeds := rss.StreamRssFeeds()
+
+	for feed := range feeds {
+		for _, item := range feed.Items {
+
+			i := &rs.FeedItem{}
+			i.CreatedAt = item.Published
+			i.Title = item.Title
+			i.Text = item.Content
+
+			if err := stream.Send(i); err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }

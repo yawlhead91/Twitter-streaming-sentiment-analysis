@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
+	rs "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/rss_route"
 	s "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/server"
 	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
 	t "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitterapi_client"
@@ -37,10 +38,12 @@ func main() {
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterTwitterRouteServer(grpcServer, &s.TwitterRouteServer{})
+	rs.RegisterRssRouteServer(grpcServer, &s.RssRouteServer{})
 	// determine whether to use TLS
 	log.Printf("Serving twitter route server on : %d", port)
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
 }

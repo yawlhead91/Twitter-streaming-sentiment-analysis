@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	rss "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/rss_route"
 	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
 	r "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/repository"
 	sentiment "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/sentiment"
@@ -90,6 +91,74 @@ func StreamTweets(session *mgo.Session) error {
 		tweet.Score = int32(score)
 
 		err = repo.Create(tweet)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func StreamRss(session *mgo.Session) error {
+
+	// Database host from the environment variables
+	host := os.Getenv("serverAddr")
+	if host != "" {
+		serverAddr = host
+	}
+
+	repo := &r.RssRepositoryI{session}
+	defer repo.Close()
+
+	var opts []grpc.DialOption
+	if *tls {
+		if *caFile == "" {
+			*caFile = "../authentication/CA.pem"
+		}
+		creds, err := credentials.NewClientTLSFromFile(*caFile, *serverHostOverride)
+		if err != nil {
+			log.Fatalf("Failed to create TLS credentials %v", err)
+		}
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+	} else {
+		opts = append(opts, grpc.WithInsecure())
+	}
+
+	conn, err := grpc.Dial(serverAddr, opts...)
+	if err != nil {
+		return err
+	}
+
+	defer conn.Close()
+
+	client := rss.NewRssRouteClient(conn)
+
+	params := &rss.ParamsRss{
+		Maxcount: 100,
+	}
+
+	stream, err := client.GetRss(context.Background(), params)
+	if err != nil {
+		return err
+	}
+
+	for {
+		item, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		score, err := sentiment.Run(item.Text)
+		if err != nil {
+			return err
+		}
+
+		item.Score = int32(score)
+
+		err = repo.Create(item)
 		if err != nil {
 			return err
 		}

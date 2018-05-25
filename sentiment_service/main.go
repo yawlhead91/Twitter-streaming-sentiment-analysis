@@ -27,7 +27,14 @@ func main() {
 		panic(fmt.Errorf("Could not connect to datastore with host %s - %v", datastoreAddr, err))
 	}
 
-	err = dc.StreamTweets(session.Clone())
+	go func() {
+		err = dc.StreamTweets(session.Clone())
+		if err != nil { // Handle errors reading the config file
+			panic(fmt.Errorf("fatal error streaming: %s", err))
+		}
+	}()
+
+	err = dc.StreamRss(session.Clone())
 	if err != nil { // Handle errors reading the config file
 		panic(fmt.Errorf("fatal error streaming: %s", err))
 	}
