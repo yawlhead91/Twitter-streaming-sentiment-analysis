@@ -14,6 +14,7 @@ block content
     tbody
       each tweet, i in tweets
         tr
+          td= tweet.source
           td= tweet.createdat
           td= tweet.text
           td= tweet.score

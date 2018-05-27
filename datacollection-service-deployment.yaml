@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.13.0 (84fa826)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: datacollection-service
+  name: datacollection-service
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: datacollection-service
+    spec:
+      containers:
+      - image: datacollection-service
+        name: datacollection-service
+        resources: {}
+        volumeMounts:
+        - mountPath: /datacollection_service
+          name: datacollection-service-claim0
+      restartPolicy: Always
+      volumes:
+      - name: datacollection-service-claim0
+        persistentVolumeClaim:
+          claimName: datacollection-service-claim0
+status: {}

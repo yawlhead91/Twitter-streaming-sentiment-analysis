@@ -89,7 +89,7 @@ func StreamTweets(session *mgo.Session) error {
 		}
 
 		entry := &r.SentimentScore{}
-		entry.Source = "Rss"
+		entry.Source = "Twitter"
 		entry.CreatedAt = tweet.CreatedAt
 		entry.Score = int32(score)
 		entry.Text = tweet.Text
