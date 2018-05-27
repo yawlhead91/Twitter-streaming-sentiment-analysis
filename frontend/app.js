@@ -10,7 +10,7 @@ var monk = require('monk');
 
 var datastore = process.env.DATASTORE_ADDR ? process.env.DATASTORE_ADDR : 'localhost:27017'
 
-var url = datastore+"/tweets"
+var url = datastore+"/sentiment"
 var db = monk(url);
 db.catch(function(err) {
   console.log(err)
