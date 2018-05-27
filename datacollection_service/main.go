@@ -40,7 +40,7 @@ func main() {
 	pb.RegisterTwitterRouteServer(grpcServer, &s.TwitterRouteServer{})
 	rs.RegisterRssRouteServer(grpcServer, &s.RssRouteServer{})
 	// determine whether to use TLS
-	log.Printf("Serving twitter route server on : %d", port)
+	log.Printf("Serving data collection route server on : %d", port)
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

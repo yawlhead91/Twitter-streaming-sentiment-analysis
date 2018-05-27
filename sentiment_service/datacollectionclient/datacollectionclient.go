@@ -160,14 +160,11 @@ func StreamRss(session *mgo.Session) error {
 			return err
 		}
 
-		log.Print("Here")
-		log.Print(item.Text)
-
 		entry := &r.SentimentScore{}
 		entry.Source = "Rss"
 		entry.CreatedAt = item.CreatedAt
 		entry.Score = int32(score)
-		entry.Text = item.Text
+		entry.Text = item.Title
 
 		err = repo.Create(entry)
 		if err != nil {
