@@ -5,7 +5,8 @@ var router = express.Router();
 router.get('/', function (req, res, next) {
 
   var db = req.db;
-  var collection = db.get('tweet_sentiment');
+  var collection = db.get('item_sentiment');
+
   var translated, average;
 
   // Preform aggregate function to get average
@@ -32,7 +33,7 @@ router.get('/', function (req, res, next) {
       });
 
       res.render('index', {
-        title: 'Tweet Sentiment',
+        title: 'Tweet and Rss Sentiment',
         tweets: translated,
         avgscore: average
       });

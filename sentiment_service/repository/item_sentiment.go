@@ -1,40 +1,47 @@
 package repository
 
 import (
-	pb "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/datacollection_service/twitter_route"
 	mgo "gopkg.in/mgo.v2"
 )
 
 const (
-	collection = "tweet_sentiment"
+	collection = "item_sentiment"
 )
 
 type Repository interface {
-	Create(*pb.Tweet) error
-	GetAll() (*pb.Tweet, error)
+	Create(*SentimentScore) error
+	GetAll() (*SentimentScore, error)
 	Close()
 }
 
-type TweetRepository struct {
+// SentimentScore is a reflection of a sentiment score results type
+type SentimentScore struct {
+	Source    string
+	CreatedAt string
+	Text      string
+	Score     int32
+}
+
+type ScoreRepository struct {
 	Session *mgo.Session
 }
 
 // Create a new thing
-func (repo *TweetRepository) Create(tweet *pb.Tweet) error {
+func (repo *ScoreRepository) Create(item *SentimentScore) error {
 
-	_, e := repo.collection().Upsert(tweet, tweet)
+	_, e := repo.collection().Upsert(item, item)
 	return e
 }
 
 // GetAll consignments
-func (repo *TweetRepository) GetAll() ([]*pb.Tweet, error) {
-	var tweet []*pb.Tweet
+func (repo *ScoreRepository) GetAll() ([]*SentimentScore, error) {
+	var item []*SentimentScore
 	// Find normally takes a query, but as we want everything, we can nil this.
 	// We then bind our consignments variable by passing it as an argument to .All().
 	// That sets consignments to the result of the find query.
 	// There's also a `One()` function for single results.
-	err := repo.collection().Find(nil).All(&tweet)
-	return tweet, err
+	err := repo.collection().Find(nil).All(&item)
+	return item, err
 }
 
 // Close closes the database session after each query has ran.
@@ -46,11 +53,11 @@ func (repo *TweetRepository) GetAll() ([]*pb.Tweet, error) {
 // I.e this approach avoids locking and allows for requests to be processed concurrently. Nice!
 // But... it does mean we need to ensure each session is closed on completion. Otherwise
 // you'll likely build up loads of dud connections and hit a connection limit. Not nice!
-func (repo *TweetRepository) Close() {
+func (repo *ScoreRepository) Close() {
 	repo.Session.Close()
 }
 
-func (repo *TweetRepository) collection() *mgo.Collection {
+func (repo *ScoreRepository) collection() *mgo.Collection {
 
 	return repo.Session.DB(dbName).C(collection)
 }

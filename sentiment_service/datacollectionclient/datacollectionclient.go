@@ -36,7 +36,7 @@ func StreamTweets(session *mgo.Session) error {
 		serverAddr = host
 	}
 
-	repo := &r.TweetRepository{session}
+	repo := &r.ScoreRepository{session}
 	defer repo.Close()
 
 	var opts []grpc.DialOption
@@ -88,9 +88,13 @@ func StreamTweets(session *mgo.Session) error {
 			return err
 		}
 
-		tweet.Score = int32(score)
+		entry := &r.SentimentScore{}
+		entry.Source = "Rss"
+		entry.CreatedAt = tweet.CreatedAt
+		entry.Score = int32(score)
+		entry.Text = tweet.Text
 
-		err = repo.Create(tweet)
+		err = repo.Create(entry)
 		if err != nil {
 			return err
 		}
@@ -101,13 +105,13 @@ func StreamTweets(session *mgo.Session) error {
 
 func StreamRss(session *mgo.Session) error {
 
-	// Database host from the environment variables
+	// Database host from the environment variablesx
 	host := os.Getenv("serverAddr")
 	if host != "" {
 		serverAddr = host
 	}
 
-	repo := &r.RssRepositoryI{session}
+	repo := &r.ScoreRepository{session}
 	defer repo.Close()
 
 	var opts []grpc.DialOption
@@ -156,9 +160,12 @@ func StreamRss(session *mgo.Session) error {
 			return err
 		}
 
-		item.Score = int32(score)
-
-		err = repo.Create(item)
+		entry := &r.SentimentScore{}
+		entry.Source = "Rss"
+		entry.CreatedAt = item.CreatedAt
+		entry.Score = int32(score)
+		entry.Text = item.Text
+		err = repo.Create(entry)
 		if err != nil {
 			return err
 		}

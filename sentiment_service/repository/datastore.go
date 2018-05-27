@@ -4,7 +4,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-const dbName = "tweets"
+const dbName = "sentiment"
 
 // CreateSession creates the main session to our mongodb instance
 func CreateSession(host string) (*mgo.Session, error) {
