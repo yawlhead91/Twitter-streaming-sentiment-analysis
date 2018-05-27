@@ -30,13 +30,13 @@ func main() {
 	}
 
 	t.Auth()
-
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
+	log.Print(grpcServer)
 	pb.RegisterTwitterRouteServer(grpcServer, &s.TwitterRouteServer{})
 	rs.RegisterRssRouteServer(grpcServer, &s.RssRouteServer{})
 	// determine whether to use TLS

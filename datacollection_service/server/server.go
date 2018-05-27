@@ -51,7 +51,7 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 	go func() {
 		err = <-errors
 		log.Print(err)
-		log.Print("Closing twitter stream")
+		log.Print("Closing twitters streamssssss")
 		ts.Stop()
 	}()
 
@@ -61,7 +61,7 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 	// 'Tweet' handler
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
-
+		log.Print("Tweets")
 		// Extract the desired data
 		r := &pb.Tweet{
 			CreatedAt:    tweet.CreatedAt,
