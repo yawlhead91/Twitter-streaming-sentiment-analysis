@@ -49,7 +49,8 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 	// Run go routine to close the
 	// twitter channel
 	go func() {
-		<-errors
+		err = <-errors
+		log.Print(err)
 		log.Print("Closing twitter stream")
 		ts.Stop()
 	}()
