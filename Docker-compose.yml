@@ -2,10 +2,10 @@ version: '3'
 services:
   datacollection_service:
     build: ./datacollection_service
-    volumes:
-      - ./datacollection_service:/datacollection_service
+    image: yawlhead91/datacollection_service
   sentiment_service:
     build: ./sentiment_service
+    image: yawlhead91/sentiment_service
     depends_on:
       - datastore
       - datacollection_service
@@ -14,6 +14,7 @@ services:
       datastoreAddr: datastore:27017
   frontend:
     build: ./frontend
+    image: docker.io/yawlhead91/frontend
     depends_on:
       - sentiment_service
     ports:
