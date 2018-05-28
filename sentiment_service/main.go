@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	dc "github.com/yawlhead91/Twitter-streaming-sentiment-analysis/sentiment_service/datacollectionclient"
@@ -21,18 +20,15 @@ func main() {
 
 	session, err := r.CreateSession(datastoreAddr)
 	if err != nil {
-		log.Print("Theres is")
 		// We're wrapping the error returned from our CreateSession
 		// here to add some context to the error.
 		panic(fmt.Errorf("Could not connect to datastore with host %s - %v", datastoreAddr, err))
 	}
 
-	go func() {
-		err = dc.StreamTweets(session.Clone())
-		if err != nil { // Handle errors reading the config file
-			panic(fmt.Errorf("fatal error streaming: %s", err))
-		}
-	}()
+	err = dc.StreamTweets(session.Clone())
+	if err != nil { // Handle errors reading the config file
+		panic(fmt.Errorf("fatal error streaming: %s", err))
+	}
 
 	err = dc.StreamRss(session.Clone())
 	if err != nil { // Handle errors reading the config file

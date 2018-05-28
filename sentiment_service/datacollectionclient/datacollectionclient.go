@@ -88,6 +88,8 @@ func StreamTweets(session *mgo.Session) error {
 			return err
 		}
 
+		log.Print("Receving tweet")
+
 		entry := &r.SentimentScore{}
 		entry.Source = "Twitter"
 		entry.CreatedAt = tweet.CreatedAt

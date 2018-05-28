@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert
+    kompose.cmd: kompose convert -f docker-compose.yml
     kompose.version: 1.13.0 (84fa826)
   creationTimestamp: null
   labels:
@@ -10,8 +10,7 @@ metadata:
   name: datacollection-service
 spec:
   replicas: 1
-  strategy:
-    type: Recreate
+  strategy: {}
   template:
     metadata:
       creationTimestamp: null
@@ -19,15 +18,8 @@ spec:
         io.kompose.service: datacollection-service
     spec:
       containers:
-      - image: datacollection-service
+      - image: yawlhead91/datacollection_service
         name: datacollection-service
         resources: {}
-        volumeMounts:
-        - mountPath: /datacollection_service
-          name: datacollection-service-claim0
       restartPolicy: Always
-      volumes:
-      - name: datacollection-service-claim0
-        persistentVolumeClaim:
-          claimName: datacollection-service-claim0
 status: {}

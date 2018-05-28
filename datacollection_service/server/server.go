@@ -63,7 +63,6 @@ func (s *TwitterRouteServer) GetTweets(params *pb.Params, stream pb.TwitterRoute
 	// 'Tweet' handler
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
-		log.Print("Tweets")
 		// Extract the desired data
 		r := &pb.Tweet{
 			CreatedAt:    tweet.CreatedAt,
